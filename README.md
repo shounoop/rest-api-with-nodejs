@@ -1,3 +1,1 @@
-# rest-api-with-nodejs
-
-Building A REST API With Node, Express, TypeScript & MongoDB + Authentication
+### Building A REST API With Node, Express, TypeScript & MongoDB + Authentication
