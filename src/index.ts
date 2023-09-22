@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
 const app = express();
 
@@ -33,8 +33,6 @@ mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
 mongoose.connection.on('error', (err: Error) => {
 	console.error(err);
-	console.log(
-		'MongoDB connection error. Please make sure MongoDB is running.'
-	);
+	console.log('MongoDB connection error. Please make sure MongoDB is running.');
 	// process.exit();
 });
