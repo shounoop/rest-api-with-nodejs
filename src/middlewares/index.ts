@@ -15,11 +15,15 @@ export const isAuthentication = async (
 			return res.sendStatus(403);
 		}
 
-    const existingUser = await getUserBySessionToken(sessionToken);
+		const existingUser = await getUserBySessionToken(sessionToken);
 
-    if (!existingUser) {
-      return res.sendStatus(403);
-    }
+		if (!existingUser) {
+			return res.sendStatus(403);
+		}
+
+		merge(req, { identity: existingUser });
+
+		return next();
 	} catch (error) {
 		console.log(error);
 		return res.status(400);
