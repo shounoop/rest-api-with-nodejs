@@ -2,6 +2,49 @@ import { createUser, getUserByEmail } from '../db/users';
 import express from 'express';
 import { random, authentication } from '../helpers';
 
+export const login = async (req: express.Request, res: express.Response) => {
+	try {
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res.sendStatus(400);
+		}
+
+		const user = await getUserByEmail(email).select(
+			'+authentication.salt +authentication.password'
+		);
+
+		if (!user) {
+			return res.sendStatus(401);
+		}
+
+		const expectedHash = authentication(user.authentication.salt, password);
+
+		if (user.authentication.password !== expectedHash) {
+			return res.sendStatus(403);
+		}
+
+		// update user session token
+		const salt = random();
+		user.authentication.sessionToken = authentication(
+			salt,
+			user._id.toString()
+		);
+
+		await user.save();
+
+		res.cookie('SHOUNOOP-AUTH', user.authentication.sessionToken, {
+			domain: 'localhost',
+			path: '/',
+		});
+
+		return res.status(200).json(user).end();
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(400);
+	}
+};
+
 export const register = async (req: express.Request, res: express.Response) => {
 	try {
 		const { email, password, username } = req.body;
